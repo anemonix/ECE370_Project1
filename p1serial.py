@@ -5,17 +5,17 @@ ser = serial.Serial('/dev/ttyS0', baudrate=9600, parity=serial.PARITY_NONE, stop
 
 ser.isOpen()
 
-print("Connected to: " + ser.portstr)
+print("Connected on: " + ser.portstr)
 while True:
-    input = raw_input("Enter angle for servo: ")
+    inp = raw_input("Enter angle for servo: ")
     
-    if int(float(input)) >= 0:
+    if float(inp) >= 0:
         sign = 1
     else:
         sign = 0
     
-    modSum = abs(int(float(input))) % 256
-    divSum = abs(int(float(input))) / 256
+    divPart = abs(int(float(inp))) / 256
+    modPart = abs(int(float(inp))) % 256
 
-    checkSum = ((sign + divSum + modSum)%256)
-    ser.write(str(chr(0xFF) + chr(0xFF) + chr(sign) + chr(divSum) + chr(modSum) + chr(checkSum)))
+    checkSum = ((divPart + modPart - sign) % 255)
+    ser.write(str(chr(0x00) + chr(0x00) + chr(sign) + chr(divPart) + chr(modPart) + chr(checkSum)))
